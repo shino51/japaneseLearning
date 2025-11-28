@@ -5,17 +5,21 @@ if TYPE_CHECKING:
     from pypdf import PdfWriter  # IDE用型ヒント
 
 from pypdf import PdfWriter, PdfReader  # 実行用（Readerも追加でページ単位対応）
+import shutil
 
 
-def merge_pdfs(input_folder, output_folder, output_filename="merged.pdf"):
+def merge_pdfs(_input_folder="input", _output_folder="output", _output_filename="merged.pdf"):
     # フォルダがなければ作成
-    os.makedirs(output_folder, exist_ok=True)
-    os.makedirs(input_folder, exist_ok=True)
+    if os.path.exists(_output_folder):
+        print(f"古いフォルダを削除中 → {_output_folder}")
+        shutil.rmtree(_output_folder)  # 中身ごと全部削除
+    os.makedirs(_output_folder, exist_ok=True)
+    os.makedirs(_input_folder, exist_ok=True)
 
     writer = PdfWriter()  # PdfMerger → PdfWriter に変更！
 
     # inputフォルダ内のPDFファイルを名前順に取得
-    pdf_files = sorted([f for f in os.listdir(input_folder) if f.lower().endswith('.pdf')])
+    pdf_files = sorted([f for f in os.listdir(_input_folder) if f.lower().endswith('.pdf')])
 
     if not pdf_files:
         print("⚠️  inputフォルダにPDFが見つかりませんでした。")
@@ -23,7 +27,7 @@ def merge_pdfs(input_folder, output_folder, output_filename="merged.pdf"):
 
     print(f"見つかったPDF ({len(pdf_files)}個):")
     for pdf in pdf_files:
-        full_path = os.path.join(input_folder, pdf)
+        full_path = os.path.join(_input_folder, pdf)
         print(f"  + {pdf}")
         try:
             # ファイルパスを直接append（PdfWriterも対応）
@@ -42,18 +46,19 @@ def merge_pdfs(input_folder, output_folder, output_filename="merged.pdf"):
                 print(f"❌ 代替追加も失敗: {e2}")
                 continue
 
-    output_path = os.path.join(output_folder, output_filename)
+    output_path = os.path.join(_output_folder, _output_filename)
     try:
         with open(output_path, "wb") as out:  # with文で安全に書き込み
             writer.write(out)
         print(f"\n✅ マージ完了！ → {output_path}")
+        # input フォルダを削除
+        print(f"inputフォルダを削除中 → {_input_folder}")
+        shutil.rmtree(_input_folder)  # 中身ごと全部削除
+        os.makedirs(_input_folder, exist_ok=True)
     except Exception as e:
         print(f"❌ 出力失敗: {e}")
 
 
 if __name__ == "__main__":
-    input_folder = "input"
-    output_folder = "output"
     output_name = "merged.pdf"
-
-    merge_pdfs(input_folder, output_folder, output_name)
+    merge_pdfs(output_name)

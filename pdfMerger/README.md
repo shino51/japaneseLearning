@@ -8,8 +8,7 @@
 
 ## セットアップ手順（Windows/Mac/Linux共通）
 
-1. フォルダを作成して以下のファイルを全部保存
-2. 仮想環境を作成・起動
+1. 仮想環境を作成・起動
 
 ```bash
 # Windows
@@ -21,14 +20,14 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-3. ライブラリインストール
+2. ライブラリインストール
 
 ```bash
 pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 ```
 
-4. `merge_pdf.py` の一番下を自分の環境に書き換えて実行
+3`merge_pdf.py` の一番下を自分の環境に書き換えて実行
 
 ```bash
 python merge_pdf.py

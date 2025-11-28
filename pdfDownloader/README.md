@@ -4,16 +4,14 @@
 存在しない番号は自動で飛ばして、存在する分だけキレイに保存します！
 
 ## 使い方
-
-1. 以下のスクリプトを `download_pdf.py` という名前で保存  
-2. ターミナルで以下を実行
+ターミナルで以下を実行
 ```bash
 pip install requests tqdm
 ```
 3. スクリプトを開いて「設定ここから」の部分を自分の欲しいものに書き換える  
 4. 実行！
 ```bash
-python download_pdf.py
+python download_sequential_pdf.py
 ```
 
 ## 設定例
