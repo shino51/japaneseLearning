@@ -1,0 +1,9 @@
+pypdf>=4.0.0
+cryptography>=43.0.1
+pip~=23.2.1
+wheel~=0.41.2
+setuptools~=68.2.0
+requests~=2.32.4
+tqdm~=4.67.1
+streamlit
+beautifulsoup4
