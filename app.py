@@ -79,7 +79,11 @@ with col1:
     url = st.text_input("PDFが載ってるページのURL",
                         value="https://xn--fdk3a7ctb5192box5b.com/yo/oekaki/ewonazoru_step1.html")
 with col2:
-    final_name = st.text_input("完成PDFの名前", value="統合済プリント.pdf")
+    final_name = st.text_input("完成PDFの名前", value="統合済プリント")
+
+    # final_name を入力してもらったあとに、.pdf がなかったら自動付与
+    if not final_name.lower().endswith('.pdf'):
+        final_name += '.pdf'
 
 if st.button("全PDFダウンロード → 結合 → 完成！！", type="primary", use_container_width=True):
     if not url.strip():
