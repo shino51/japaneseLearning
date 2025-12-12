@@ -6,12 +6,21 @@ import os
 import shutil
 from pdfDownloader.download_pdfs_from_page import download_pdfs_from_page
 from pdfMerger.merge_pdf import merge_pdfs
+import urllib.robotparser
 
 st.set_page_config(
     page_title="PDF吸い取り＋結合マシーン",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+st.error("""
+【重要：必ずお読みください】
+・このツールは「公開されているPDFリンク」のみを対象としています
+・ログインが必要なページ・利用規約で自動取得を禁止しているサイトは絶対に使用しないでください
+・著作権侵害になる使い方は一切禁止です。使用者は自己責任でお願いします
+・開発者は一切の責任を負いません
+""")
 
 
 # ==================== 環境自動判別 ====================
@@ -85,7 +94,27 @@ with col2:
     if not final_name.lower().endswith('.pdf'):
         final_name += '.pdf'
 
+
+def is_allowed(_url):
+    try:
+        rp = urllib.robotparser.RobotFileParser()
+        rp.set_url("/".join(_url.split("/")[:3]) + "/robots.txt")
+        rp.read()
+        return rp.can_fetch("*", _url)
+    except:
+        return True
+
+
 if st.button("全PDFダウンロード → 結合 → 完成！！", type="primary", use_container_width=True):
+
+    # 利用可能なウェブサイトでのみ利用OK
+    if "login" in url or "member" in url:
+        st.error("ログインが必要なページは使用禁止です")
+        st.stop()
+    if not is_allowed(url):
+        st.error("このサイトは自動取得を禁止しています")
+        st.stop()
+
     if not url.strip():
         st.error("URLを入力してください！")
         st.stop()
