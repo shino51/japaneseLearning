@@ -13,7 +13,6 @@ def merge_pdfs(_input_folder="input", _output_folder="output", _output_filename=
     if not os.path.exists(_output_folder):
         print(f"新しいフォルダを作成中 → {_output_folder}")
         os.makedirs(_output_folder, exist_ok=True)
-    os.makedirs(_input_folder, exist_ok=True)
 
     writer = PdfWriter()  # PdfMerger → PdfWriter に変更！
 
@@ -50,10 +49,6 @@ def merge_pdfs(_input_folder="input", _output_folder="output", _output_filename=
         with open(output_path, "wb") as out:  # with文で安全に書き込み
             writer.write(out)
         print(f"\n✅ マージ完了！ → {output_path}")
-        # input フォルダを削除
-        print(f"inputフォルダを削除中 → {_input_folder}")
-        shutil.rmtree(_input_folder)  # 中身ごと全部削除
-        os.makedirs(_input_folder, exist_ok=True)
     except Exception as e:
         print(f"❌ 出力失敗: {e}")
 

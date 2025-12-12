@@ -16,7 +16,7 @@
 
 めっちゃ便利な絵本・同人誌・問題集・教科書・資料を、**たった10秒で1つのPDFにまとめる**最強ツール！！
 
-https://your-username-pdf-tool.streamlit.app
+https://shino-japaneselearning-mergepdfs.streamlit.app/
 
 ## できること（全部自動！）
 
