@@ -55,4 +55,4 @@ def merge_pdfs(_input_folder="input", _output_folder="output", _output_filename=
 
 if __name__ == "__main__":
     output_name = "merged.pdf"
-    merge_pdfs(output_name)
+    merge_pdfs(_output_filename=output_name)
