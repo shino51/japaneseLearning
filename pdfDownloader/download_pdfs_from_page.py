@@ -53,7 +53,7 @@ def download_pdfs_from_page(_target_url, _output_dir="output"):
             tqdm.write(f"失敗: {filename} → {e}")
 
     print("すべて完了！")
-    print(f"保存先 → {os.path.abspath(_output_dir)}")
+    # print(f"保存先 → {os.path.abspath(_output_dir)}")
     print(f"合計 {len([f for f in os.listdir(_output_dir) if f.endswith(target_ext)])} ファイル")
 
 

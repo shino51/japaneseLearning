@@ -85,8 +85,7 @@ st.caption(f"保存先 → **{save_dir if not IS_CLOUD else 'クラウド上（�
 # ==================== 入力 ====================
 col1, col2 = st.columns([2, 1])
 with col1:
-    url = st.text_input("PDFが載ってるページのURL",
-                        value="https://xn--fdk3a7ctb5192box5b.com/yo/oekaki/ewonazoru_step1.html")
+    url = st.text_input("PDFが載ってるページのURL")
 with col2:
     final_name = st.text_input("完成PDFの名前", value="統合済プリント")
 
