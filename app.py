@@ -77,8 +77,10 @@ else:
             selected = filedialog.askdirectory(title="保存先を選択", initialdir=save_dir)
             if selected:
                 save_dir = selected
-        except:
-            pass
+        except SystemExit:
+            raise  # Re-raise SystemExit to allow the program to exit
+        except Exception:
+            pass  # Handle other exceptions silently
 
 st.caption(f"保存先 → **{save_dir if not IS_CLOUD else 'クラウド上（一時的）'}**")
 
@@ -100,7 +102,9 @@ def is_allowed(_url):
         rp.set_url("/".join(_url.split("/")[:3]) + "/robots.txt")
         rp.read()
         return rp.can_fetch("*", _url)
-    except:
+    except SystemExit:
+        raise  # Re-raise SystemExit to allow the program to exit
+    except Exception:
         return True
 
 
@@ -128,7 +132,7 @@ if st.button("全PDFダウンロード → 結合 → 完成！！", type="prima
         try:
             download_pdfs_from_page(url, temp_folder)
             pdf_files = [os.path.join(temp_folder, f) for f in os.listdir(temp_folder)
-                         if f.lower().endswith('.pdf') and os.path.isfile(os.path.join(temp_folder, f))]
+                         if f.lower().endswith('_printable.pdf') and os.path.isfile(os.path.join(temp_folder, f))]
             if not pdf_files:
                 st.error("PDFが見つかりませんでした")
                 shutil.rmtree(temp_folder, ignore_errors=True)

@@ -3,6 +3,99 @@ import os
 import shutil
 import subprocess
 from pypdf import PdfWriter, PdfReader
+import zipfile
+from PIL import Image
+
+
+def merge_pdfs(_input_folder="input", _output_folder="output", _output_filename="merged.pdf"):
+    os.makedirs(_output_folder, exist_ok=True)
+
+    # Check for ZIP files in the input folder
+    zip_files = [f for f in os.listdir(_input_folder) if f.lower().endswith(".zip")]
+    if zip_files:
+        for zip_file in zip_files:
+            zip_path = os.path.join(_input_folder, zip_file)
+            extract_zip(zip_path, _input_folder)
+
+    # Convert images to PDFs
+    convert_images_to_pdfs(_input_folder)
+
+    writer = PdfWriter()
+    pdf_files = sorted([f for f in os.listdir(_input_folder) if f.lower().endswith(".pdf")])
+
+    if not pdf_files:
+        print("⚠️ inputフォルダにPDFが見つかりませんでした。")
+        return
+
+    print(f"見つかったPDF ({len(pdf_files)}個):")
+    for pdf in pdf_files:
+        full_path = os.path.join(_input_folder, pdf)
+        print(f"  + {pdf}")
+
+        try:
+            with open(full_path, "rb") as f:
+                reader = PdfReader(f)
+                if reader.is_encrypted:
+                    reader.decrypt("")
+
+                for page in reader.pages:
+                    # ★ここで全ページを縦向きに強制
+                    force_portrait(page)
+                    writer.add_page(page)
+
+        except Exception as e:
+            print(f"❌ {pdf} の処理に失敗: {e}")
+            continue
+
+    merged_path = os.path.join(_output_folder, _output_filename)
+    with open(merged_path, "wb") as out:
+        writer.write(out)
+    print(f"\n✅ マージ（向き強制）完了！ → {merged_path}")
+
+    base, ext = os.path.splitext(_output_filename)
+    printable_path = os.path.join(_output_folder, f"{base}_printable{ext}")
+
+    normalize_pdf_with_ghostscript(
+        input_pdf=merged_path,
+        output_pdf=printable_path,
+        compatibility_level="1.4",
+        pdfsettings="/prepress",
+    )
+    print(f"✅ 正規化（印刷向け）完了！ → {printable_path}")
+
+
+def convert_images_to_pdfs(input_folder):
+    """
+    Converts all image files in the input folder to PDFs.
+    """
+    image_extensions = (".jpg", ".jpeg", ".png", ".bmp", ".tiff")
+    image_files = [f for f in os.listdir(input_folder) if f.lower().endswith(image_extensions)]
+
+    for image_file in image_files:
+        image_path = os.path.join(input_folder, image_file)
+        pdf_path = os.path.splitext(image_path)[0] + ".pdf"
+
+        try:
+            with Image.open(image_path) as img:
+                # Convert image to RGB mode if not already
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+                img.save(pdf_path, "PDF", resolution=100.0)
+            print(f"✅ 画像をPDFに変換しました: {image_file} → {os.path.basename(pdf_path)}")
+        except Exception as e:
+            print(f"❌ 画像のPDF変換に失敗しました: {image_file} - {e}")
+
+
+def extract_zip(zip_path, extract_to):
+    """
+    Extracts a ZIP file to the specified directory.
+    """
+    if not zipfile.is_zipfile(zip_path):
+        raise ValueError(f"{zip_path} is not a valid ZIP file.")
+
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_to)
+    print(f"✅ ZIPファイルを展開しました: {zip_path} → {extract_to}")
 
 
 def find_ghostscript_executable() -> str:
@@ -68,52 +161,5 @@ def force_portrait(page) -> None:
         page.rotate(90)
 
 
-def merge_pdfs(_input_folder="input", _output_folder="output", _output_filename="merged.pdf"):
-    os.makedirs(_output_folder, exist_ok=True)
-
-    writer = PdfWriter()
-    pdf_files = sorted([f for f in os.listdir(_input_folder) if f.lower().endswith(".pdf")])
-
-    if not pdf_files:
-        print("⚠️ inputフォルダにPDFが見つかりませんでした。")
-        return
-
-    print(f"見つかったPDF ({len(pdf_files)}個):")
-    for pdf in pdf_files:
-        full_path = os.path.join(_input_folder, pdf)
-        print(f"  + {pdf}")
-
-        try:
-            with open(full_path, "rb") as f:
-                reader = PdfReader(f)
-                if reader.is_encrypted:
-                    reader.decrypt("")
-
-                for page in reader.pages:
-                    # ★ここで全ページを縦向きに強制
-                    force_portrait(page)
-                    writer.add_page(page)
-
-        except Exception as e:
-            print(f"❌ {pdf} の処理に失敗: {e}")
-            continue
-
-    merged_path = os.path.join(_output_folder, _output_filename)
-    with open(merged_path, "wb") as out:
-        writer.write(out)
-    print(f"\n✅ マージ（向き強制）完了！ → {merged_path}")
-
-    base, ext = os.path.splitext(_output_filename)
-    printable_path = os.path.join(_output_folder, f"{base}_printable{ext}")
-
-    normalize_pdf_with_ghostscript(
-        input_pdf=merged_path,
-        output_pdf=printable_path,
-        compatibility_level="1.4",
-        pdfsettings="/prepress",
-    )
-    print(f"✅ 正規化（印刷向け）完了！ → {printable_path}")
-
-
 if __name__ == "__main__":
-    merge_pdfs(_output_filename="week2.pdf")
+    merge_pdfs(_output_filename="week9.pdf")

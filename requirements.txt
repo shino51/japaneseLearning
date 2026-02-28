@@ -5,5 +5,6 @@ wheel~=0.41.2
 setuptools~=68.2.0
 requests~=2.32.4
 tqdm~=4.67.1
-streamlit
-beautifulsoup4
+streamlit~=1.40.1
+beautifulsoup4~=4.14.2
+pillow~=10.4.0
