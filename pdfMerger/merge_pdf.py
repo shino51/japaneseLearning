@@ -21,7 +21,16 @@ def merge_pdfs(_input_folder="input", _output_folder="output", _output_filename=
     convert_images_to_pdfs(_input_folder)
 
     writer = PdfWriter()
-    pdf_files = sorted([f for f in os.listdir(_input_folder) if f.lower().endswith(".pdf")])
+    # pdf_files = sorted([f for f in os.listdir(_input_folder) if f.lower().endswith(".pdf")])
+
+    # Recursively find all PDF files in the input folder and its subdirectories
+    pdf_files = []
+    for root, _, files in os.walk(_input_folder):
+        for file in files:
+            if file.lower().endswith(".pdf"):
+                pdf_files.append(os.path.join(root, file))
+
+    pdf_files.sort()  # Sort the files for consistent order
 
     if not pdf_files:
         print("⚠️ inputフォルダにPDFが見つかりませんでした。")
@@ -29,11 +38,10 @@ def merge_pdfs(_input_folder="input", _output_folder="output", _output_filename=
 
     print(f"見つかったPDF ({len(pdf_files)}個):")
     for pdf in pdf_files:
-        full_path = os.path.join(_input_folder, pdf)
         print(f"  + {pdf}")
 
         try:
-            with open(full_path, "rb") as f:
+            with open(pdf, "rb") as f:  # Use the correct full path directly
                 reader = PdfReader(f)
                 if reader.is_encrypted:
                     reader.decrypt("")
@@ -162,4 +170,4 @@ def force_portrait(page) -> None:
 
 
 if __name__ == "__main__":
-    merge_pdfs(_output_filename="week9.pdf")
+    merge_pdfs(_output_filename="week10.pdf")
