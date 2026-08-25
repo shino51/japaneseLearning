@@ -17,7 +17,7 @@ A4_H = Cm(29.7)
 
 # PokeAPI sprites repository: official artwork PNGs.
 ARTWORK_URL = (
-    "`https://raw.githubusercontent.com/PokeAPI/sprites/master/`"
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/"
     "sprites/pokemon/other/official-artwork/{dex_id}.png"
 )
 
